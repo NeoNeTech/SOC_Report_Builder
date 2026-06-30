@@ -1,0 +1,21 @@
+{
+  "name": "soc-report-builder",
+  "version": "1.0.0",
+  "description": "Single-page web app for SOC analysts to build and export professional investigation reports, with live import from TheHive 5.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "serve": "node server.js",
+    "check": "node scripts/check.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NeoNeTech/SOC_Report_Builder.git"
+  },
+  "keywords": ["soc", "dfir", "incident-response", "thehive", "report", "security"],
+  "license": "MIT"
+}

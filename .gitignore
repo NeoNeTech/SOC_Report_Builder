@@ -10,3 +10,8 @@ Thumbs.db
 
 # Local drafts exported by the app
 *_draft.json
+
+# Dev server runtime files
+.server.pid
+server.log
+server.log.err

@@ -1,20 +1,22 @@
 #!/usr/bin/env node
 // ============================================================
-// Tiny static file server (zero dependencies).
+// Tiny static file server (zero dependencies, ES module).
 // ES modules don't load over file:// — serve the app over HTTP.
 //
 //   node server.js            -> http://localhost:5173
 //   PORT=8080 node server.js  -> custom port
+//   npm start                 -> same as `node server.js`
 //
 // This server ONLY serves files. TheHive calls go straight from
 // the browser to your TheHive instance (direct fetch), so TheHive
 // must allow this origin via CORS. It holds no API key.
 // ============================================================
-const http = require("http");
-const fs = require("fs");
-const path = require("path");
+import http from "node:http";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const ROOT = __dirname;
+const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT || 5173;
 
 const MIME = {
@@ -34,13 +36,19 @@ const server = http.createServer((req, res) => {
   if (urlPath === "/") urlPath = "/index.html";
 
   // Resolve and prevent path traversal outside ROOT.
-  const filePath = path.join(ROOT, urlPath);
+  const filePath = path.normalize(path.join(ROOT, urlPath));
   if (!filePath.startsWith(ROOT)) {
-    res.writeHead(403); res.end("Forbidden"); return;
+    res.writeHead(403);
+    res.end("Forbidden");
+    return;
   }
 
   fs.readFile(filePath, (err, data) => {
-    if (err) { res.writeHead(404); res.end("Not found: " + urlPath); return; }
+    if (err) {
+      res.writeHead(404);
+      res.end("Not found: " + urlPath);
+      return;
+    }
     res.writeHead(200, { "Content-Type": MIME[path.extname(filePath)] || "application/octet-stream" });
     res.end(data);
   });
