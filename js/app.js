@@ -9,8 +9,9 @@ import { buildMarkdown } from "./markdown.js";
 import { exportPdf } from "./pdf.js";
 import { saveDraft, loadDraftFile } from "./draft.js";
 import { initThehive } from "./thehive.js";
+import { TEMPLATES, applyTemplate } from "./templates.js";
 import { toast, confirmModal } from "./ui.js";
-import { icons } from "./util.js";
+import { icons, esc } from "./util.js";
 
 const $ = (id) => document.getElementById(id);
 
@@ -77,10 +78,32 @@ function wireToolbar() {
   };
 }
 
+function wireTemplates() {
+  const menu = $("templatesMenu");
+  const btn = $("btnTemplates");
+  menu.innerHTML =
+    `<div class="menu-label">Start from a playbook</div>` +
+    TEMPLATES.map((t) =>
+      `<button class="menu-item" data-tpl="${t.id}"><i data-lucide="${t.icon}"></i><span><span class="mi-title">${esc(t.name)}</span><span class="mi-desc">${esc(t.desc)}</span></span></button>`
+    ).join("");
+  icons();
+
+  btn.onclick = (e) => { e.stopPropagation(); menu.classList.toggle("show"); };
+  menu.onclick = (e) => {
+    const item = e.target.closest("[data-tpl]");
+    if (!item) return;
+    const tpl = TEMPLATES.find((x) => x.id === item.getAttribute("data-tpl"));
+    if (tpl) { applyTemplate(tpl); fullRender(); toast(`Template "${tpl.name}" applied`); }
+    menu.classList.remove("show");
+  };
+  document.addEventListener("click", () => menu.classList.remove("show"));
+}
+
 function boot() {
   initForm();
   initThehive(fullRender);
   wireToolbar();
+  wireTemplates();
   render();
   icons();
 }

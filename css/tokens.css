@@ -1,5 +1,6 @@
 /* ============================================================
-   NEXUS DESIGN SYSTEM — DESIGN TOKENS (premium edition)
+   DESIGN TOKENS — restrained, professional "instrument" UI
+   Flat surfaces, neutral palette, color reserved for meaning.
    ============================================================ */
 :root {
   /* Spacing — 4px system */
@@ -7,122 +8,110 @@
   --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
   --space-12: 48px;
 
-  /* Radius */
-  --radius-sm: 7px;
-  --radius-md: 11px;
-  --radius-lg: 18px;
-  --radius-xl: 24px;
+  /* Radius — tight, tool-like */
+  --radius-sm: 5px;
+  --radius-md: 7px;
+  --radius-lg: 10px;
   --radius-full: 999px;
 
-  /* Type scale — compact, web-app */
+  /* Type scale — compact */
   --text-xs: 11px;
   --text-sm: 12px;
   --text-base: 13px;
-  --text-md: 15px;
-  --text-lg: 18px;
-  --text-xl: 23px;
+  --text-md: 14px;
+  --text-lg: 17px;
+  --text-xl: 20px;
 
   /* Fonts */
   --font-body: 'Satoshi', system-ui, -apple-system, sans-serif;
   --font-head: 'General Sans', system-ui, -apple-system, sans-serif;
   --font-mono: 'SFMono-Regular', 'JetBrains Mono', Consolas, 'Liberation Mono', monospace;
 
-  /* Section accent colors */
-  --accent-metadata: #2dd4bf;    /* teal */
-  --accent-summary:  #60a5fa;    /* blue */
-  --accent-technical:#fb923c;    /* orange */
-  --accent-investigation:#a78bfa;/* violet */
-  --accent-remediation:#34d399;  /* green */
-  --accent-references:#f472b6;   /* pink */
+  /* Section accent colors — muted, used only as a thin rail + icon tint */
+  --accent-metadata: #3fb8ab;
+  --accent-summary:  #5a8dd6;
+  --accent-technical:#d98a4e;
+  --accent-investigation:#9078d4;
+  --accent-remediation:#4cae7e;
+  --accent-references:#c96aa0;
 
-  /* Status colors (theme-independent) */
-  --color-error:   #f43f5e;
-  --color-orange:  #fb923c;
-  --color-gold:    #fbbf24;
-  --color-blue:    #60a5fa;
-  --color-warning: #fbbf24;
-  --color-success: #34d399;
+  /* Semantic colors */
+  --color-error:   #e5484d;
+  --color-orange:  #e08e3c;
+  --color-gold:    #d7a72b;
+  --color-blue:    #4f90e0;
+  --color-warning: #d7a72b;
+  --color-success: #3aa676;
 
-  /* Brand gradient */
-  --grad-teal: linear-gradient(135deg, #2dd4bf 0%, #06b6d4 100%);
-
-  /* Motion */
-  --transition: 240ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-fast: 140ms cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Motion — short, no bounce */
+  --transition: 150ms ease;
+  --transition-fast: 100ms ease;
 }
 
 /* DARK THEME (default) */
 [data-theme="dark"] {
-  --bg-app:      #070a10;
-  --bg-panel:    #0b101a;
-  --bg-card:     #10172480;          /* translucent for layered depth */
-  --bg-card-solid:#121a28;
-  --bg-elevated: #18212f;
-  --bg-input:    #0a111c;
-  --bg-hover:    #1a2434;
-  --bg-active:   #202c3e;
+  --bg-app:      #0c0f14;
+  --bg-panel:    #0f131a;
+  --bg-card:     #141922;
+  --bg-card-solid:#141922;
+  --bg-elevated: #1a202b;
+  --bg-input:    #0e131b;
+  --bg-hover:    #1a212c;
+  --bg-active:   #222a36;
 
-  --border:      rgba(148, 168, 196, 0.13);
-  --border-soft: rgba(148, 168, 196, 0.07);
-  --border-strong: rgba(148, 168, 196, 0.24);
+  --border:      #242c38;
+  --border-soft: #1b212b;
+  --border-strong: #323c4a;
 
-  --text:        #eef3f8;
-  --text-muted:  #93a3b8;
-  --text-faint:  #5e6e82;
+  --text:        #e7ebf1;
+  --text-muted:  #94a0b0;
+  --text-faint:  #5f6b7a;
 
-  --color-teal:  #2dd4bf;
-  --color-teal-strong: #5eead4;
-  --color-teal-dim: rgba(45, 212, 191, 0.13);
+  --color-teal:  #17a99a;
+  --color-teal-strong: #1fc4b2;
+  --color-teal-dim: rgba(23, 169, 154, 0.14);
+  --color-teal-fg: #051512;
 
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
-  --shadow-md: 0 6px 22px rgba(0,0,0,0.42);
-  --shadow-lg: 0 20px 56px rgba(0,0,0,0.58);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.35);
+  --shadow-md: 0 4px 14px rgba(0,0,0,0.40);
+  --shadow-lg: 0 14px 40px rgba(0,0,0,0.55);
   --shadow: var(--shadow-md);
-  --glow-teal: 0 0 0 1px rgba(45,212,191,0.35), 0 10px 34px rgba(45,212,191,0.28);
-  --ring: 0 0 0 3px var(--color-teal-dim);
+  --ring: 0 0 0 2px var(--bg-panel), 0 0 0 4px var(--color-teal);
 
-  --doc-bg: #0c131e;
-  --doc-fg: #eef3f8;
-
-  /* ambient background glows */
-  --glow-1: radial-gradient(900px 500px at 12% -8%, rgba(45,212,191,0.10), transparent 60%);
-  --glow-2: radial-gradient(800px 520px at 100% 0%, rgba(96,165,250,0.08), transparent 55%);
+  --doc-bg: #11161f;
+  --doc-fg: #e7ebf1;
 }
 
 /* LIGHT THEME */
 [data-theme="light"] {
-  --bg-app:      #eef1f6;
-  --bg-panel:    #f7f9fc;
+  --bg-app:      #eff2f6;
+  --bg-panel:    #f8fafc;
   --bg-card:     #ffffff;
   --bg-card-solid:#ffffff;
   --bg-elevated: #ffffff;
   --bg-input:    #ffffff;
-  --bg-hover:    #f0f4f9;
-  --bg-active:   #e7edf5;
+  --bg-hover:    #f1f4f8;
+  --bg-active:   #e7edf4;
 
-  --border:      rgba(15, 23, 42, 0.10);
-  --border-soft: rgba(15, 23, 42, 0.06);
-  --border-strong: rgba(15, 23, 42, 0.18);
+  --border:      #dde3ea;
+  --border-soft: #e9edf2;
+  --border-strong: #c6cfda;
 
-  --text:        #131a26;
-  --text-muted:  #586577;
-  --text-faint:  #97a3b4;
+  --text:        #18202c;
+  --text-muted:  #5a6675;
+  --text-faint:  #9099a6;
 
-  --color-teal:  #0d9488;
-  --color-teal-strong: #0f766e;
-  --color-teal-dim: rgba(13, 148, 136, 0.10);
+  --color-teal:  #0e8c80;
+  --color-teal-strong: #0b766b;
+  --color-teal-dim: rgba(14, 140, 128, 0.10);
+  --color-teal-fg: #ffffff;
 
   --shadow-sm: 0 1px 2px rgba(20,30,50,0.06);
-  --shadow-md: 0 8px 28px rgba(20,30,50,0.10);
-  --shadow-lg: 0 24px 60px rgba(20,30,50,0.16);
+  --shadow-md: 0 4px 14px rgba(20,30,50,0.09);
+  --shadow-lg: 0 16px 44px rgba(20,30,50,0.14);
   --shadow: var(--shadow-md);
-  --glow-teal: 0 0 0 1px rgba(13,148,136,0.25), 0 10px 30px rgba(13,148,136,0.18);
-  --ring: 0 0 0 3px var(--color-teal-dim);
+  --ring: 0 0 0 2px var(--bg-panel), 0 0 0 4px var(--color-teal);
 
   --doc-bg: #ffffff;
-  --doc-fg: #131a26;
-
-  --glow-1: radial-gradient(900px 500px at 12% -8%, rgba(13,148,136,0.07), transparent 60%);
-  --glow-2: radial-gradient(800px 520px at 100% 0%, rgba(96,165,250,0.06), transparent 55%);
+  --doc-fg: #18202c;
 }

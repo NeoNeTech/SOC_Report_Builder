@@ -2,11 +2,13 @@
 // FORM — renders the left panel and wires all input events.
 // Emits CHANGE on the bus whenever state mutates.
 // ============================================================
-import { OPT } from "./config.js";
+import { OPT, lookupMitre } from "./config.js";
 import { SECTION_META, LIST_DEFS } from "./schema.js";
-import { state, newId, setPath, getList, findRow } from "./state.js";
+import { state, newId, setPath, getList, findRowWithPath } from "./state.js";
 import { esc, optionList, field, icons } from "./util.js";
 import { emitChange } from "./bus.js";
+import { extractIocs } from "./ioc.js";
+import { toast, openOverlay, closeOverlay } from "./ui.js";
 
 const openSections = new Set(["metadata"]);
 let panel;
@@ -56,7 +58,12 @@ const builders = {
     return `
       ${field("Attack Vector", `<select data-bind="technical.vector">${optionList(OPT.attackVector, t.vector)}</select>`)}
       ${field("MITRE ATT&CK Techniques", dynList("technical.mitre"))}
-      ${field("Indicators of Compromise (IOC)", dynList("technical.iocs"))}
+      <div class="field">
+        <label class="field-label">Indicators of Compromise (IOC)
+          <button type="button" class="field-action" data-ioc-extract><i data-lucide="scan-search"></i> Extract from text</button>
+        </label>
+        ${dynList("technical.iocs")}
+      </div>
       ${field("Timeline of Events", dynList("technical.timeline"))}
       ${field("Log Evidence", `<textarea class="mono" data-bind="technical.logs" rows="6" placeholder="Paste raw log snippets here...">${esc(t.logs)}</textarea>`)}
       ${field("Screenshots / Analyst Notes", `<textarea data-bind="technical.notes" placeholder="Notes about evidence, screenshots referenced, observations...">${esc(t.notes)}</textarea>`)}
@@ -183,6 +190,12 @@ function onClick(e) {
       rerenderList(path);
       emitChange();
     }, 200);
+    return;
+  }
+  if (e.target.closest("[data-ioc-extract]")) {
+    document.getElementById("iocInput").value = "";
+    refreshIocPreview();
+    openOverlay("iocOverlay");
   }
 }
 
@@ -191,15 +204,72 @@ function onInput(e) {
   const bind = el.getAttribute("data-bind");
   if (bind) { setPath(bind, el.value); emitChange(); return; }
   const rid = el.getAttribute("data-row");
-  if (rid) {
-    const row = findRow(rid);
-    if (row) { row[el.getAttribute("data-key")] = el.value; emitChange(); }
+  if (!rid) return;
+  const found = findRowWithPath(rid);
+  if (!found) return;
+  const { row, path } = found;
+  const key = el.getAttribute("data-key");
+  row[key] = el.value;
+
+  // Time-savers: auto-fill from a known MITRE id, auto-detect IOC type.
+  if (path === "technical.mitre" && key === "id") {
+    const hit = lookupMitre(el.value);
+    if (hit) {
+      row.name = hit.name; row.tactic = hit.tactic;
+      const rowEl = el.closest(".dyn-row");
+      const nameEl = rowEl.querySelector('[data-key="name"]');
+      const tacEl = rowEl.querySelector('[data-key="tactic"]');
+      if (nameEl) nameEl.value = hit.name;
+      if (tacEl) tacEl.value = hit.tactic;
+    }
+  } else if (path === "technical.iocs" && key === "value") {
+    const typeEl = el.closest(".dyn-row").querySelector('[data-key="type"]');
+    if (typeEl && !typeEl.value) {
+      const det = extractIocs(el.value)[0];
+      if (det) { row.type = det.type; typeEl.value = det.type; }
+    }
   }
+  emitChange();
+}
+
+// ---------- IOC extraction modal ----------
+let iocDetected = [];
+function refreshIocPreview() {
+  const input = document.getElementById("iocInput");
+  const result = document.getElementById("iocResult");
+  iocDetected = extractIocs(input.value);
+  document.getElementById("iocCount").textContent = iocDetected.length;
+  if (!iocDetected.length) {
+    result.innerHTML = `<span class="extract-empty">${input.value.trim() ? "No indicators detected." : "Detected indicators will appear here."}</span>`;
+    return;
+  }
+  result.innerHTML = iocDetected
+    .map((d) => `<div class="er-row"><span class="er-type">${esc(d.type)}</span><span class="er-val">${esc(d.value)}</span></div>`)
+    .join("");
+  icons();
+}
+
+function initIocModal() {
+  document.getElementById("iocInput").addEventListener("input", refreshIocPreview);
+  document.getElementById("iocClear").onclick = () => { document.getElementById("iocInput").value = ""; refreshIocPreview(); };
+  document.getElementById("iocClose").onclick = () => closeOverlay("iocOverlay");
+  document.getElementById("iocAdd").onclick = () => {
+    if (iocDetected.length) {
+      const list = getList("technical.iocs");
+      iocDetected.forEach((d) => list.push({ _id: newId(), type: d.type, value: d.value, desc: "", confidence: "" }));
+      openSections.add("technical");
+      renderForm();
+      emitChange();
+      toast(`Added ${iocDetected.length} IOC${iocDetected.length > 1 ? "s" : ""}`);
+    }
+    closeOverlay("iocOverlay");
+  };
 }
 
 export function initForm() {
   panel = document.getElementById("formPanel");
   panel.addEventListener("click", onClick);
   panel.addEventListener("input", onInput);
+  initIocModal();
   renderForm();
 }

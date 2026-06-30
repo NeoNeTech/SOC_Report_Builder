@@ -55,6 +55,15 @@ export function findRow(rowId) {
   return null;
 }
 
+// Like findRow, but also returns which list (dotted path) it belongs to.
+export function findRowWithPath(rowId) {
+  for (const p of LIST_PATHS) {
+    const row = getList(p).find((r) => r._id === rowId);
+    if (row) return { row, path: p };
+  }
+  return null;
+}
+
 // Merge a loaded object into a clean state shape (defensive against bad JSON).
 export function mergeIntoBlank(loaded) {
   const s = blankState();

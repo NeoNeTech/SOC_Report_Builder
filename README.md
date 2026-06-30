@@ -27,7 +27,15 @@ you export it.
   remediation, references.
 - **Live import from TheHive 5** — pull a case's metadata, observables (IOC), MITRE
   procedures (TTP) and tasks straight into the report.
-- **Export** — A4 PDF (auto-paginated) and clean Markdown to clipboard.
+- **Time-savers** (the whole point — stop writing boilerplate):
+  - **Incident templates / playbooks** (Phishing, Malware/Ransomware, Brute Force,
+    Data Exfiltration) pre-fill summary, MITRE techniques, containment & recommendations.
+  - **IOC auto-extraction** — paste raw logs/email/alert text and IPs, domains, URLs,
+    hashes and emails are detected automatically (handles defanged `1[.]2[.]3[.]4`, `hxxp`).
+  - **MITRE autocomplete** — type a technique ID (e.g. `T1566.001`) and the name + tactic
+    fill in; IOC type is auto-detected from the value.
+- **Export** — native, **text-based A4 PDF** (selectable text, real pagination via
+  jsPDF + AutoTable) and clean Markdown to clipboard.
 - **Drafts** — save/load the whole report as JSON.
 - **Dark / light themes**, responsive, keyboard-accessible.
 
@@ -124,7 +132,7 @@ After that, pushes to `main` deploy automatically.
 ## 🗂️ Project structure
 
 ```
-index.html            # markup + CDN includes (fonts, jsPDF, html2canvas, lucide)
+index.html            # markup + CDN includes (fonts, jsPDF + AutoTable, lucide)
 server.js             # zero-dependency static file server (ES module)
 package.json          # npm scripts: start / check
 scripts/
@@ -148,10 +156,12 @@ js/
   form.js             # left panel render + input wiring
   preview.js          # live report render + progress bar
   markdown.js         # "Copy as Markdown" export
-  pdf.js              # html2canvas + jsPDF A4 paginated export
+  pdf.js              # native jsPDF (+AutoTable) text-based A4 export
+  ioc.js              # IOC extraction from raw text (defang-aware)
+  templates.js        # incident playbooks (pre-fill the report)
   draft.js            # save/load JSON drafts
   thehive.js          # TheHive 5 client + case → state mapping
-  ui.js               # toast + confirm modal
+  ui.js               # toast + confirm modal + dropdown menu
   app.js              # bootstrap + toolbar wiring
 ```
 
