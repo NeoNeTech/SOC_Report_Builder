@@ -1,0 +1,12 @@
+# Dependencies (none currently, but keep clean)
+node_modules/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# Local drafts exported by the app
+*_draft.json

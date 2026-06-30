@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SOC Report Builder</title>
+
+<!-- Fonts: Satoshi (body) + General Sans (headings) -->
+<link rel="preconnect" href="https://api.fontshare.com" />
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet" />
+
+<!-- jsPDF + html2canvas for PDF export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+
+<!-- Styles -->
+<link rel="stylesheet" href="css/tokens.css" />
+<link rel="stylesheet" href="css/base.css" />
+<link rel="stylesheet" href="css/layout.css" />
+<link rel="stylesheet" href="css/form.css" />
+<link rel="stylesheet" href="css/preview.css" />
+</head>
+<body>
+<div class="app">
+
+  <!-- ============ HEADER ============ -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div class="brand-text">
+        <h1>SOC Report Builder</h1>
+        <span>Investigation report generator</span>
+      </div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <span class="progress-label" id="progressLabel">0%</span>
+    </div>
+
+    <div class="header-spacer"></div>
+
+    <div class="toolbar">
+      <button class="btn btn-ghost" id="btnThehive"><i data-lucide="database"></i><span>TheHive</span></button>
+      <button class="btn btn-ghost" id="btnNew"><i data-lucide="file-plus"></i><span>New</span></button>
+      <button class="btn btn-ghost" id="btnSave"><i data-lucide="download"></i><span>Save</span></button>
+      <button class="btn btn-ghost" id="btnLoad"><i data-lucide="upload"></i><span>Load</span></button>
+      <button class="btn btn-ghost" id="btnMd"><i data-lucide="clipboard-copy"></i><span>Copy MD</span></button>
+      <button class="btn btn-primary" id="btnPdf"><i data-lucide="file-down"></i><span>Export PDF</span></button>
+      <button class="btn btn-icon btn-ghost" id="btnTheme" title="Toggle theme"><i data-lucide="moon"></i></button>
+      <input type="file" id="fileInput" accept="application/json" hidden />
+    </div>
+  </header>
+
+  <!-- ============ MAIN ============ -->
+  <div class="main">
+    <section class="panel form-panel" id="formPanel"></section>
+
+    <section class="panel preview-panel">
+      <div class="preview-bar">
+        <h2><i data-lucide="eye"></i> Live Preview</h2>
+        <div class="header-spacer"></div>
+        <button class="btn btn-primary" id="btnPdf2"><i data-lucide="file-down"></i><span>Export PDF</span></button>
+      </div>
+      <div class="preview-scroll">
+        <div class="doc" id="doc"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- Mobile toggle -->
+<button class="btn btn-primary mobile-toggle" id="btnMobileToggle"><i data-lucide="eye"></i> See Preview</button>
+
+<!-- Confirm modal -->
+<div class="overlay" id="confirmOverlay">
+  <div class="modal">
+    <h3 id="confirmTitle">Are you sure?</h3>
+    <p id="confirmMsg">This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="confirmCancel">Cancel</button>
+      <button class="btn btn-danger" id="confirmOk">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- TheHive connection modal -->
+<div class="overlay" id="thehiveOverlay">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <h3><i data-lucide="database"></i> Import from TheHive 5</h3>
+      <button class="btn btn-icon btn-ghost" id="thehiveClose"><i data-lucide="x"></i></button>
+    </div>
+    <p>Pull case metadata, observables (IOC), MITRE procedures (TTP) and tasks directly from a TheHive case.</p>
+
+    <div class="th-status" id="thStatus" data-state="idle">
+      <span class="th-dot"></span><span id="thStatusText">Not connected</span>
+    </div>
+
+    <div class="field">
+      <label class="field-label">TheHive Base URL</label>
+      <input id="thUrl" placeholder="https://thehive.mycorp.com" autocomplete="off" />
+    </div>
+    <div class="field">
+      <label class="field-label">API Key <span class="th-hint">(kept in memory only)</span></label>
+      <input id="thKey" type="password" placeholder="API key from your TheHive profile" autocomplete="off" />
+    </div>
+    <div class="field-row cols-2">
+      <div class="field">
+        <label class="field-label">Case number or ID</label>
+        <input id="thCase" placeholder="e.g. 512 or ~40988" autocomplete="off" />
+      </div>
+      <div class="field" style="justify-content:flex-end">
+        <label class="th-check"><input type="checkbox" id="thReplace" checked /> Replace existing data</label>
+      </div>
+    </div>
+
+    <div class="th-warn" id="thWarn" hidden></div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="thTest"><i data-lucide="plug"></i> Test connection</button>
+      <button class="btn btn-primary" id="thImport"><i data-lucide="download-cloud"></i> Fetch & import</button>
+    </div>
+    <details class="th-help">
+      <summary>CORS not working? Read this</summary>
+      <p>A browser blocks cross-origin calls unless TheHive returns the right headers. Your TheHive admin must allow this app's origin via <code>play.http.cors</code> / reverse-proxy headers (<code>Access-Control-Allow-Origin</code>, <code>-Headers: authorization,content-type</code>). If you can't enable it, run the app behind a proxy that adds the API key server-side.</p>
+    </details>
+  </div>
+</div>
+
+<!-- PDF generating overlay -->
+<div class="overlay pdf-overlay" id="pdfOverlay">
+  <div class="spinner"></div>
+  <div>Generating PDF…</div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><i data-lucide="check-circle"></i><span id="toastMsg">Done</span></div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+/* ============================================================
+   BASE — reset, typography, buttons, overlays, toast
+   ============================================================ */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  background: var(--bg-app);
+  color: var(--text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+h1,h2,h3,h4,h5 { font-family: var(--font-head); font-weight: 600; line-height: 1.25; }
+a { color: inherit; }
+::selection { background: var(--color-teal); color: #051014; }
+
+/* Scrollbars */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: var(--border); border-radius: var(--radius-full); border: 2px solid transparent; background-clip: content-box; }
+*::-webkit-scrollbar-thumb:hover { background: var(--text-faint); background-clip: content-box; }
+
+/* ---- Buttons ---- */
+.btn {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  font-family: var(--font-body); font-size: var(--text-sm); font-weight: 500;
+  padding: var(--space-2) var(--space-3); border-radius: var(--radius-md);
+  border: 1px solid var(--border); background: var(--bg-card); color: var(--text);
+  cursor: pointer; transition: all var(--transition); white-space: nowrap; line-height: 1;
+}
+.btn:hover { background: var(--bg-hover); border-color: var(--text-faint); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn svg { width: 15px; height: 15px; }
+.btn-ghost { background: transparent; }
+.btn-primary {
+  background: var(--color-teal); border-color: var(--color-teal); color: #051014; font-weight: 700;
+  box-shadow: 0 2px 10px rgba(45,212,191,0.25);
+}
+.btn-primary:hover { background: #5eead4; border-color: #5eead4; }
+.btn-icon { padding: var(--space-2); }
+.btn-danger:hover { background: var(--color-error); border-color: var(--color-error); color: #fff; }
+
+/* ---- Overlay + Modal ---- */
+.overlay {
+  position: fixed; inset: 0; background: rgba(5,9,14,0.78); backdrop-filter: blur(4px);
+  display: none; place-items: center; z-index: 100;
+}
+.overlay.show { display: grid; }
+.modal {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: var(--space-6); max-width: 420px; width: 90%; box-shadow: var(--shadow);
+  animation: modalIn var(--transition); max-height: 90vh; overflow-y: auto;
+}
+.modal-lg { max-width: 520px; }
+@keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1); } }
+.modal h3 { font-size: var(--text-lg); margin-bottom: var(--space-2); display: flex; align-items: center; gap: var(--space-2); }
+.modal h3 svg { width: 18px; height: 18px; color: var(--color-teal); }
+.modal > p { color: var(--text-muted); font-size: var(--text-base); margin-bottom: var(--space-5); }
+.modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-2); }
+.modal-head h3 { margin: 0; }
+.modal .field { margin-bottom: var(--space-3); }
+.modal-actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-5); }
+
+.pdf-overlay { flex-direction: column; gap: var(--space-4); color: var(--text); }
+.spinner { width: 42px; height: 42px; border: 3px solid var(--border); border-top-color: var(--color-teal); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---- Toast ---- */
+.toast {
+  position: fixed; bottom: var(--space-6); left: 50%; transform: translateX(-50%) translateY(80px);
+  background: var(--bg-elevated); border: 1px solid var(--border); border-left: 3px solid var(--color-success);
+  color: var(--text); padding: var(--space-3) var(--space-5); border-radius: var(--radius-md);
+  box-shadow: var(--shadow); font-size: var(--text-sm); z-index: 200; opacity: 0;
+  transition: all var(--transition); display: flex; align-items: center; gap: var(--space-2); max-width: 90vw;
+}
+.toast svg { width: 16px; height: 16px; color: var(--color-success); flex-shrink: 0; }
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+.toast.error { border-left-color: var(--color-error); }
+.toast.error svg { color: var(--color-error); }
+
+/* ---- TheHive modal bits ---- */
+.th-status { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); margin-bottom: var(--space-4); color: var(--text-muted); }
+.th-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--text-faint); flex-shrink: 0; }
+.th-status[data-state="ok"] .th-dot { background: var(--color-success); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-success) 25%, transparent); }
+.th-status[data-state="ok"] { color: var(--color-success); }
+.th-status[data-state="error"] .th-dot { background: var(--color-error); }
+.th-status[data-state="error"] { color: var(--color-error); }
+.th-status[data-state="loading"] .th-dot { background: var(--color-gold); animation: pulse 1s infinite; }
+@keyframes pulse { 50% { opacity: 0.3; } }
+.th-hint { font-weight: 400; text-transform: none; color: var(--text-faint); letter-spacing: 0; }
+.th-check { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); color: var(--text-muted); cursor: pointer; }
+.th-warn { background: color-mix(in srgb, var(--color-error) 12%, transparent); border: 1px solid color-mix(in srgb, var(--color-error) 35%, transparent); color: var(--color-error); padding: var(--space-3); border-radius: var(--radius-md); font-size: var(--text-sm); margin-bottom: var(--space-4); white-space: pre-wrap; }
+.th-help { margin-top: var(--space-4); font-size: var(--text-sm); color: var(--text-muted); }
+.th-help summary { cursor: pointer; color: var(--color-teal); }
+.th-help p { margin-top: var(--space-2); line-height: 1.6; }
+.th-help code { font-family: var(--font-mono); font-size: var(--text-xs); background: var(--bg-input); padding: 1px 5px; border-radius: 4px; }
