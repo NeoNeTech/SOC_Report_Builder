@@ -26,71 +26,75 @@ const builders = {
     }).join("");
     return `
       <div class="field-row cols-2">
-        ${field("Ticket ID", `<input data-bind="meta.ticketId" value="${esc(m.ticketId)}" placeholder="INC-2024-0512" />`, true)}
-        ${field("Severity", `<select data-bind="meta.severity">${optionList(OPT.severity, m.severity)}</select>`, true)}
+        ${field("Identifiant du ticket", `<input data-bind="meta.ticketId" value="${esc(m.ticketId)}" placeholder="INC-2024-0512" />`, true)}
+        ${field("Sévérité", `<select data-bind="meta.severity">${optionList(OPT.severity, m.severity)}</select>`, true)}
       </div>
       <div class="field-row cols-2">
-        ${field("Status", `<select data-bind="meta.status">${optionList(OPT.status, m.status)}</select>`, true)}
-        ${field("Detection Date", `<input type="datetime-local" data-bind="meta.detectionDate" value="${esc(m.detectionDate)}" />`, true)}
+        ${field("Classification", `<select data-bind="meta.classification">${optionList(OPT.classification, m.classification)}</select>`, true)}
+        ${field("TLP", `<select data-bind="meta.tlp">${optionList(OPT.tlp, m.tlp)}</select>`, true)}
       </div>
       <div class="field-row cols-2">
-        ${field("Analyst Name", `<input data-bind="meta.analyst" value="${esc(m.analyst)}" placeholder="John Doe" />`, true)}
-        ${field("Team", `<input data-bind="meta.team" value="${esc(m.team)}" placeholder="SOC Tier 2" />`)}
+        ${field("Statut", `<select data-bind="meta.status">${optionList(OPT.status, m.status)}</select>`, true)}
+        ${field("Date de détection", `<input type="datetime-local" data-bind="meta.detectionDate" value="${esc(m.detectionDate)}" />`, true)}
       </div>
-      ${field("Tags (comma-separated)", `<input data-bind="meta.tags" value="${esc(m.tags)}" placeholder="phishing, credential-theft, o365" />`)}
-      ${field("Source Tools", `<div class="checks">${checks}</div>`)}
-      ${field("Other tool", `<input data-bind="meta.toolsOther" value="${esc(m.toolsOther)}" placeholder="e.g. Sentinel, Cortex XDR" />`)}
+      <div class="field-row cols-2">
+        ${field("Analyste", `<input data-bind="meta.analyst" value="${esc(m.analyst)}" placeholder="Jean Dupont" />`, true)}
+        ${field("Équipe", `<input data-bind="meta.team" value="${esc(m.team)}" placeholder="SOC Niveau 2" />`)}
+      </div>
+      ${field("Étiquettes (séparées par des virgules)", `<input data-bind="meta.tags" value="${esc(m.tags)}" placeholder="hameçonnage, vol-identifiants, o365" />`)}
+      ${field("Outils source", `<div class="checks">${checks}</div>`)}
+      ${field("Autre outil", `<input data-bind="meta.toolsOther" value="${esc(m.toolsOther)}" placeholder="ex. Sentinel, Cortex XDR" />`)}
     `;
   },
   summary() {
     const s = state.summary;
     return `
-      ${field("Summary", `<textarea data-bind="summary.text" rows="5" placeholder="Plain-language description of the incident: what happened, who was affected, and current status...">${esc(s.text)}</textarea>`, true)}
-      ${field("Affected Assets", dynList("summary.assets"))}
+      ${field("Synthèse", `<textarea data-bind="summary.text" rows="5" placeholder="Description en langage clair de l'incident : ce qui s'est passé, qui est concerné, état actuel...">${esc(s.text)}</textarea>`, true)}
+      ${field("Actifs impactés", dynList("summary.assets"))}
       <div class="field-row cols-2">
-        ${field("Impact Level", `<select data-bind="summary.impactLevel">${optionList(OPT.impact, s.impactLevel)}</select>`)}
+        ${field("Niveau d'impact", `<select data-bind="summary.impactLevel">${optionList(OPT.impact, s.impactLevel)}</select>`)}
       </div>
-      ${field("Impact Description", `<textarea data-bind="summary.impactDesc" placeholder="Describe operational, financial or data-confidentiality impact...">${esc(s.impactDesc)}</textarea>`)}
+      ${field("Description de l'impact", `<textarea data-bind="summary.impactDesc" placeholder="Décrire l'impact opérationnel, financier ou sur la confidentialité des données...">${esc(s.impactDesc)}</textarea>`)}
     `;
   },
   technical() {
     const t = state.technical;
     return `
-      ${field("Attack Vector", `<select data-bind="technical.vector">${optionList(OPT.attackVector, t.vector)}</select>`)}
-      ${field("MITRE ATT&CK Techniques", dynList("technical.mitre"))}
+      ${field("Vecteur d'attaque", `<select data-bind="technical.vector">${optionList(OPT.attackVector, t.vector)}</select>`)}
+      ${field("Techniques MITRE ATT&CK", dynList("technical.mitre"))}
       <div class="field">
-        <label class="field-label">Indicators of Compromise (IOC)
-          <button type="button" class="field-action" data-ioc-extract><i data-lucide="scan-search"></i> Extract from text</button>
+        <label class="field-label">Indicateurs de compromission (IOC)
+          <button type="button" class="field-action" data-ioc-extract><i data-lucide="scan-search"></i> Extraire depuis un texte</button>
         </label>
         ${dynList("technical.iocs")}
       </div>
-      ${field("Timeline of Events", dynList("technical.timeline"))}
-      ${field("Log Evidence", `<textarea class="mono" data-bind="technical.logs" rows="6" placeholder="Paste raw log snippets here...">${esc(t.logs)}</textarea>`)}
-      ${field("Screenshots / Analyst Notes", `<textarea data-bind="technical.notes" placeholder="Notes about evidence, screenshots referenced, observations...">${esc(t.notes)}</textarea>`)}
+      ${field("Chronologie des événements", dynList("technical.timeline"))}
+      ${field("Preuves (logs)", `<textarea class="mono" data-bind="technical.logs" rows="6" placeholder="Coller ici des extraits de logs bruts...">${esc(t.logs)}</textarea>`)}
+      ${field("Captures / notes d'analyste", `<textarea data-bind="technical.notes" placeholder="Notes sur les preuves, captures référencées, observations...">${esc(t.notes)}</textarea>`)}
     `;
   },
   investigation() {
     const i = state.investigation;
     return `
-      ${field("Investigation Narrative", `<textarea data-bind="investigation.narrative" rows="6" placeholder="Step-by-step description of what was investigated and how...">${esc(i.narrative)}</textarea>`)}
-      ${field("Queries Used", dynList("investigation.queries"))}
-      ${field("False Positive Analysis", `<textarea data-bind="investigation.fpAnalysis" placeholder="If applicable, explain why this could be a false positive...">${esc(i.fpAnalysis)}</textarea>`)}
-      ${field("Root Cause", `<textarea data-bind="investigation.rootCause" placeholder="Identified root cause of the incident...">${esc(i.rootCause)}</textarea>`)}
+      ${field("Déroulé de l'investigation", `<textarea data-bind="investigation.narrative" rows="6" placeholder="Description étape par étape de ce qui a été investigué et comment...">${esc(i.narrative)}</textarea>`)}
+      ${field("Requêtes utilisées", dynList("investigation.queries"))}
+      ${field("Analyse de faux positif", `<textarea data-bind="investigation.fpAnalysis" placeholder="Le cas échéant, expliquer pourquoi il pourrait s'agir d'un faux positif...">${esc(i.fpAnalysis)}</textarea>`)}
+      ${field("Cause racine", `<textarea data-bind="investigation.rootCause" placeholder="Cause racine identifiée de l'incident...">${esc(i.rootCause)}</textarea>`)}
     `;
   },
   remediation() {
     const r = state.remediation;
     return `
-      ${field("Containment Actions", dynList("remediation.containment"))}
-      ${field("Remediation Recommendations", dynList("remediation.recommendations"))}
-      ${field("Lessons Learned", `<textarea data-bind="remediation.lessons" placeholder="What can be improved in detection, response or prevention...">${esc(r.lessons)}</textarea>`)}
+      ${field("Actions de confinement", dynList("remediation.containment"))}
+      ${field("Recommandations de remédiation", dynList("remediation.recommendations"))}
+      ${field("Enseignements tirés", `<textarea data-bind="remediation.lessons" placeholder="Ce qui peut être amélioré en détection, réponse ou prévention...">${esc(r.lessons)}</textarea>`)}
     `;
   },
   references() {
     const r = state.references;
     return `
-      ${field("Related Tickets (comma-separated)", `<input data-bind="references.relatedTickets" value="${esc(r.relatedTickets)}" placeholder="INC-2024-0510, INC-2024-0498" />`)}
-      ${field("External References", dynList("references.external"))}
+      ${field("Tickets liés (séparés par des virgules)", `<input data-bind="references.relatedTickets" value="${esc(r.relatedTickets)}" placeholder="INC-2024-0510, INC-2024-0498" />`)}
+      ${field("Références externes", dynList("references.external"))}
     `;
   },
 };
@@ -240,7 +244,7 @@ function refreshIocPreview() {
   iocDetected = extractIocs(input.value);
   document.getElementById("iocCount").textContent = iocDetected.length;
   if (!iocDetected.length) {
-    result.innerHTML = `<span class="extract-empty">${input.value.trim() ? "No indicators detected." : "Detected indicators will appear here."}</span>`;
+    result.innerHTML = `<span class="extract-empty">${input.value.trim() ? "Aucun indicateur détecté." : "Les indicateurs détectés apparaîtront ici."}</span>`;
     return;
   }
   result.innerHTML = iocDetected
@@ -260,7 +264,7 @@ function initIocModal() {
       openSections.add("technical");
       renderForm();
       emitChange();
-      toast(`Added ${iocDetected.length} IOC${iocDetected.length > 1 ? "s" : ""}`);
+      toast(`${iocDetected.length} IOC ajouté${iocDetected.length > 1 ? "s" : ""}`);
     }
     closeOverlay("iocOverlay");
   };

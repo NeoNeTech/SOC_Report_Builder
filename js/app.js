@@ -30,10 +30,10 @@ function fullRender() {
 
 function wireToolbar() {
   $("btnNew").onclick = () =>
-    confirmModal("Start a new report?", "This will clear all fields. Save a draft first if needed.", () => {
+    confirmModal("Démarrer un nouveau rapport ?", "Tous les champs seront effacés. Enregistrez un brouillon au besoin.", () => {
       resetState();
       fullRender();
-      toast("New report started");
+      toast("Nouveau rapport démarré");
     });
 
   $("btnSave").onclick = saveDraft;
@@ -48,12 +48,12 @@ function wireToolbar() {
     const md = buildMarkdown();
     try {
       await navigator.clipboard.writeText(md);
-      toast("Markdown copied to clipboard");
+      toast("Markdown copié dans le presse-papiers");
     } catch {
       const ta = document.createElement("textarea");
       ta.value = md; document.body.appendChild(ta); ta.select();
-      try { document.execCommand("copy"); toast("Markdown copied"); }
-      catch { toast("Copy failed", true); }
+      try { document.execCommand("copy"); toast("Markdown copié"); }
+      catch { toast("Échec de la copie", true); }
       ta.remove();
     }
   };
@@ -73,7 +73,7 @@ function wireToolbar() {
   mobileBtn.onclick = () => {
     document.body.classList.toggle("show-preview");
     const showing = document.body.classList.contains("show-preview");
-    mobileBtn.innerHTML = showing ? '<i data-lucide="pencil"></i> Edit Form' : '<i data-lucide="eye"></i> See Preview';
+    mobileBtn.innerHTML = showing ? '<i data-lucide="pencil"></i> Éditer' : '<i data-lucide="eye"></i> Voir l\'aperçu';
     icons();
   };
 }
@@ -82,7 +82,7 @@ function wireTemplates() {
   const menu = $("templatesMenu");
   const btn = $("btnTemplates");
   menu.innerHTML =
-    `<div class="menu-label">Start from a playbook</div>` +
+    `<div class="menu-label">Partir d'un playbook</div>` +
     TEMPLATES.map((t) =>
       `<button class="menu-item" data-tpl="${t.id}"><i data-lucide="${t.icon}"></i><span><span class="mi-title">${esc(t.name)}</span><span class="mi-desc">${esc(t.desc)}</span></span></button>`
     ).join("");
@@ -93,7 +93,7 @@ function wireTemplates() {
     const item = e.target.closest("[data-tpl]");
     if (!item) return;
     const tpl = TEMPLATES.find((x) => x.id === item.getAttribute("data-tpl"));
-    if (tpl) { applyTemplate(tpl); fullRender(); toast(`Template "${tpl.name}" applied`); }
+    if (tpl) { applyTemplate(tpl); fullRender(); toast(`Modèle « ${tpl.name} » appliqué`); }
     menu.classList.remove("show");
   };
   document.addEventListener("click", () => menu.classList.remove("show"));

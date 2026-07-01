@@ -21,6 +21,11 @@ you export it.
 
 ## ✨ Features
 
+- **Interface & rapport 100 % en français.**
+- **Classification** (Non Protégé / Diffusion Restreinte / Secret) and **TLP**
+  (CLEAR/GREEN/AMBER/AMBER+STRICT/RED) markings — shown in the report header and
+  printed as banners at the top & bottom of every PDF page.
+
 - **Two-pane editor** — accordion form on the left, live document preview on the right.
 - **Full investigation schema** — metadata, executive summary, technical analysis
   (attack vector, MITRE ATT&CK, IOCs, timeline, logs), investigation steps, containment &

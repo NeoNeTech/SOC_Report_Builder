@@ -13,7 +13,7 @@ export function saveDraft() {
   a.download = `${(state.meta.ticketId || "soc-report").replace(/[^\w.-]+/g, "-")}_draft.json`;
   a.click();
   URL.revokeObjectURL(url);
-  toast("Draft saved as JSON");
+  toast("Brouillon enregistré en JSON");
 }
 
 // onLoaded() is called after a successful import so the app can re-render.
@@ -26,10 +26,10 @@ export function loadDraftFile(file, onLoaded) {
       replaceState(mergeIntoBlank(parsed));
       ensureRowIds();
       onLoaded();
-      toast("Draft loaded");
+      toast("Brouillon chargé");
     } catch (err) {
       console.error(err);
-      toast("Invalid JSON file", true);
+      toast("Fichier JSON invalide", true);
     }
   };
   reader.readAsText(file);

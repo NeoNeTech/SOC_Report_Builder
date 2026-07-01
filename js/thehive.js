@@ -6,7 +6,7 @@
 // this app's origin, allow Authorization + Content-Type headers).
 // The API key lives only in this module's memory (never stored).
 // ============================================================
-import { OPT, THEHIVE_SEVERITY, mapThehiveStatus, mapObservableType, ASSET_DATATYPES } from "./config.js";
+import { THEHIVE_SEVERITY, mapThehiveStatus, mapObservableType, ASSET_DATATYPES, normTactic } from "./config.js";
 import { state, newId } from "./state.js";
 import { toDatetimeLocal } from "./util.js";
 import { toast, openOverlay, closeOverlay } from "./ui.js";
@@ -26,15 +26,15 @@ async function query(name, q) {
   } catch (e) {
     // TypeError here almost always means the browser blocked the response
     // (CORS) or the host is unreachable — fetch can't distinguish them.
-    const err = new Error("Network/CORS error — the browser could not reach TheHive or the response was blocked by CORS. Verify the URL and that TheHive allows this origin.");
+    const err = new Error("Erreur réseau/CORS — le navigateur n'a pas pu joindre TheHive ou la réponse a été bloquée par le CORS. Vérifiez l'URL et que TheHive autorise cette origine.");
     err.cors = true;
     throw err;
   }
   if (!res.ok) {
     let detail = "";
     try { detail = await res.text(); } catch { /* ignore */ }
-    if (res.status === 401) throw new Error("401 Unauthorized — check your API key.");
-    throw new Error(`TheHive ${res.status}: ${(detail || res.statusText).slice(0, 240)}`);
+    if (res.status === 401) throw new Error("401 Non autorisé — vérifiez votre clé API.");
+    throw new Error(`TheHive ${res.status} : ${(detail || res.statusText).slice(0, 240)}`);
   }
   return res.json();
 }
@@ -71,7 +71,7 @@ async function resolveCase(ref) {
 
 export async function fetchCase(ref) {
   const caseObj = await resolveCase(ref);
-  if (!caseObj || !caseObj._id) throw new Error(`Case "${ref}" not found in this organisation.`);
+  if (!caseObj || !caseObj._id) throw new Error(`Case « ${ref} » introuvable dans cette organisation.`);
   const id = caseObj._id;
 
   const observables = await query("observables", [{ _name: "getCase", idOrName: id }, { _name: "observables" }]).catch(() => []);
@@ -87,13 +87,6 @@ export async function fetchCase(ref) {
 }
 
 // ---------- mapping helpers ----------
-function normTactic(v) {
-  if (!v) return "";
-  const raw = Array.isArray(v) ? v[0] : v;
-  const flat = String(raw).toLowerCase().replace(/[^a-z]/g, "");
-  return OPT.tactic.find((o) => o.toLowerCase().replace(/[^a-z]/g, "") === flat) || String(raw);
-}
-
 function mapObservables(observables) {
   const iocs = [];
   const assets = [];
@@ -104,7 +97,7 @@ function mapObservables(observables) {
       type: mapObservableType(o.dataType, value),
       value,
       desc: o.message || (o.tags || []).join(", ") || "",
-      confidence: o.ioc ? "High" : "Medium",
+      confidence: o.ioc ? "Élevée" : "Moyenne",
     });
     if (ASSET_DATATYPES.has(String(o.dataType || "").toLowerCase())) {
       const isIp = /^ip/i.test(o.dataType);
@@ -184,13 +177,13 @@ export function initThehive(onImported) {
   $("thTest").onclick = async () => {
     clearWarn();
     setConn($("thUrl").value, $("thKey").value);
-    if (!conn.url || !conn.key) { showWarn("Enter both the base URL and an API key."); return; }
-    setStatus("loading", "Testing…"); busy(true);
+    if (!conn.url || !conn.key) { showWarn("Saisissez l'URL de base et une clé API."); return; }
+    setStatus("loading", "Test en cours…"); busy(true);
     try {
       const who = await testConnection();
-      setStatus("ok", `Connected as ${who}`);
+      setStatus("ok", `Connecté en tant que ${who}`);
     } catch (e) {
-      setStatus("error", "Connection failed");
+      setStatus("error", "Échec de la connexion");
       showWarn(e.message);
     } finally { busy(false); }
   };
@@ -199,18 +192,18 @@ export function initThehive(onImported) {
     clearWarn();
     setConn($("thUrl").value, $("thKey").value);
     const ref = $("thCase").value.trim();
-    if (!conn.url || !conn.key) { showWarn("Enter both the base URL and an API key."); return; }
-    if (!ref) { showWarn("Enter a case number or ID."); return; }
-    setStatus("loading", "Fetching case…"); busy(true);
+    if (!conn.url || !conn.key) { showWarn("Saisissez l'URL de base et une clé API."); return; }
+    if (!ref) { showWarn("Saisissez un numéro ou un ID de case."); return; }
+    setStatus("loading", "Récupération du case…"); busy(true);
     try {
       const data = await fetchCase(ref);
       const counts = applyCase(data, $("thReplace").checked);
-      setStatus("ok", `Imported case #${counts.caseNumber ?? ref}`);
+      setStatus("ok", `Case #${counts.caseNumber ?? ref} importé`);
       onImported();
       closeOverlay("thehiveOverlay");
-      toast(`Imported ${counts.iocs} IOCs, ${counts.mitre} TTPs, ${counts.assets} assets, ${counts.timeline} timeline events`);
+      toast(`${counts.iocs} IOC, ${counts.mitre} TTP, ${counts.assets} actifs, ${counts.timeline} événements importés`);
     } catch (e) {
-      setStatus("error", "Import failed");
+      setStatus("error", "Échec de l'import");
       showWarn(e.message);
     } finally { busy(false); }
   };

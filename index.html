@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="fr" data-theme="dark">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -34,7 +34,7 @@
       </div>
       <div class="brand-text">
         <h1>SOC Report Builder</h1>
-        <span>Investigation report generator</span>
+        <span>Générateur de rapport d'investigation</span>
       </div>
     </div>
 
@@ -46,14 +46,14 @@
     <div class="header-spacer"></div>
 
     <div class="toolbar">
-      <button class="btn btn-ghost" id="btnTemplates"><i data-lucide="layout-template"></i><span>Templates</span></button>
+      <button class="btn btn-ghost" id="btnTemplates"><i data-lucide="layout-template"></i><span>Modèles</span></button>
       <button class="btn btn-ghost" id="btnThehive"><i data-lucide="database"></i><span>TheHive</span></button>
-      <button class="btn btn-ghost" id="btnNew"><i data-lucide="file-plus"></i><span>New</span></button>
-      <button class="btn btn-ghost" id="btnSave"><i data-lucide="download"></i><span>Save</span></button>
-      <button class="btn btn-ghost" id="btnLoad"><i data-lucide="upload"></i><span>Load</span></button>
-      <button class="btn btn-ghost" id="btnMd"><i data-lucide="clipboard-copy"></i><span>Copy MD</span></button>
-      <button class="btn btn-primary" id="btnPdf"><i data-lucide="file-down"></i><span>Export PDF</span></button>
-      <button class="btn btn-icon btn-ghost" id="btnTheme" title="Toggle theme"><i data-lucide="moon"></i></button>
+      <button class="btn btn-ghost" id="btnNew"><i data-lucide="file-plus"></i><span>Nouveau</span></button>
+      <button class="btn btn-ghost" id="btnSave"><i data-lucide="download"></i><span>Enregistrer</span></button>
+      <button class="btn btn-ghost" id="btnLoad"><i data-lucide="upload"></i><span>Charger</span></button>
+      <button class="btn btn-ghost" id="btnMd"><i data-lucide="clipboard-copy"></i><span>Copier MD</span></button>
+      <button class="btn btn-primary" id="btnPdf"><i data-lucide="file-down"></i><span>Exporter PDF</span></button>
+      <button class="btn btn-icon btn-ghost" id="btnTheme" title="Changer de thème"><i data-lucide="moon"></i></button>
       <input type="file" id="fileInput" accept="application/json" hidden />
       <div class="menu" id="templatesMenu"></div>
     </div>
@@ -77,23 +77,23 @@
 </div>
 
 <!-- Mobile toggle -->
-<button class="btn btn-primary mobile-toggle" id="btnMobileToggle"><i data-lucide="eye"></i> See Preview</button>
+<button class="btn btn-primary mobile-toggle" id="btnMobileToggle"><i data-lucide="eye"></i> Voir l'aperçu</button>
 
 <!-- IOC extraction modal -->
 <div class="overlay" id="iocOverlay">
   <div class="modal modal-lg">
     <div class="modal-head">
-      <h3><i data-lucide="scan-search"></i> Extract IOCs from text</h3>
+      <h3><i data-lucide="scan-search"></i> Extraire des IOC depuis un texte</h3>
       <button class="btn btn-icon btn-ghost" id="iocClose"><i data-lucide="x"></i></button>
     </div>
-    <p>Paste raw logs, an email, an alert or any text. IPs, domains, URLs, hashes and emails are detected automatically (defanged values like <code>1[.]2[.]3[.]4</code> and <code>hxxp</code> are handled).</p>
+    <p>Collez des logs bruts, un email, une alerte ou tout texte. Les IP, domaines, URL, hash et emails sont détectés automatiquement (les valeurs « defangées » comme <code>1[.]2[.]3[.]4</code> et <code>hxxp</code> sont gérées).</p>
     <div class="field">
-      <textarea id="iocInput" class="mono" rows="7" placeholder="Paste content here…"></textarea>
+      <textarea id="iocInput" class="mono" rows="7" placeholder="Collez le contenu ici…"></textarea>
     </div>
-    <div class="extract-result" id="iocResult"><span class="extract-empty">Detected indicators will appear here.</span></div>
+    <div class="extract-result" id="iocResult"><span class="extract-empty">Les indicateurs détectés apparaîtront ici.</span></div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" id="iocClear">Clear</button>
-      <button class="btn btn-primary" id="iocAdd"><i data-lucide="plus"></i> Add <span id="iocCount">0</span> IOCs</button>
+      <button class="btn btn-ghost" id="iocClear">Effacer</button>
+      <button class="btn btn-primary" id="iocAdd"><i data-lucide="plus"></i> Ajouter <span id="iocCount">0</span> IOC</button>
     </div>
   </div>
 </div>
@@ -101,11 +101,11 @@
 <!-- Confirm modal -->
 <div class="overlay" id="confirmOverlay">
   <div class="modal">
-    <h3 id="confirmTitle">Are you sure?</h3>
-    <p id="confirmMsg">This action cannot be undone.</p>
+    <h3 id="confirmTitle">Confirmer ?</h3>
+    <p id="confirmMsg">Cette action est irréversible.</p>
     <div class="modal-actions">
-      <button class="btn btn-ghost" id="confirmCancel">Cancel</button>
-      <button class="btn btn-danger" id="confirmOk">Confirm</button>
+      <button class="btn btn-ghost" id="confirmCancel">Annuler</button>
+      <button class="btn btn-danger" id="confirmOk">Confirmer</button>
     </div>
   </div>
 </div>
@@ -114,42 +114,42 @@
 <div class="overlay" id="thehiveOverlay">
   <div class="modal modal-lg">
     <div class="modal-head">
-      <h3><i data-lucide="database"></i> Import from TheHive 5</h3>
+      <h3><i data-lucide="database"></i> Importer depuis TheHive 5</h3>
       <button class="btn btn-icon btn-ghost" id="thehiveClose"><i data-lucide="x"></i></button>
     </div>
-    <p>Pull case metadata, observables (IOC), MITRE procedures (TTP) and tasks directly from a TheHive case.</p>
+    <p>Récupérer les métadonnées du case, les observables (IOC), les procédures MITRE (TTP) et les tâches directement depuis un case TheHive.</p>
 
     <div class="th-status" id="thStatus" data-state="idle">
-      <span class="th-dot"></span><span id="thStatusText">Not connected</span>
+      <span class="th-dot"></span><span id="thStatusText">Non connecté</span>
     </div>
 
     <div class="field">
-      <label class="field-label">TheHive Base URL</label>
-      <input id="thUrl" placeholder="https://thehive.mycorp.com" autocomplete="off" />
+      <label class="field-label">URL de base TheHive</label>
+      <input id="thUrl" placeholder="https://thehive.monentreprise.com" autocomplete="off" />
     </div>
     <div class="field">
-      <label class="field-label">API Key <span class="th-hint">(kept in memory only)</span></label>
-      <input id="thKey" type="password" placeholder="API key from your TheHive profile" autocomplete="off" />
+      <label class="field-label">Clé API <span class="th-hint">(conservée en mémoire uniquement)</span></label>
+      <input id="thKey" type="password" placeholder="Clé API de votre profil TheHive" autocomplete="off" />
     </div>
     <div class="field-row cols-2">
       <div class="field">
-        <label class="field-label">Case number or ID</label>
-        <input id="thCase" placeholder="e.g. 512 or ~40988" autocomplete="off" />
+        <label class="field-label">Numéro ou ID du case</label>
+        <input id="thCase" placeholder="ex. 512 ou ~40988" autocomplete="off" />
       </div>
       <div class="field" style="justify-content:flex-end">
-        <label class="th-check"><input type="checkbox" id="thReplace" checked /> Replace existing data</label>
+        <label class="th-check"><input type="checkbox" id="thReplace" checked /> Remplacer les données existantes</label>
       </div>
     </div>
 
     <div class="th-warn" id="thWarn" hidden></div>
 
     <div class="modal-actions">
-      <button class="btn btn-ghost" id="thTest"><i data-lucide="plug"></i> Test connection</button>
-      <button class="btn btn-primary" id="thImport"><i data-lucide="download-cloud"></i> Fetch & import</button>
+      <button class="btn btn-ghost" id="thTest"><i data-lucide="plug"></i> Tester la connexion</button>
+      <button class="btn btn-primary" id="thImport"><i data-lucide="download-cloud"></i> Récupérer & importer</button>
     </div>
     <details class="th-help">
-      <summary>CORS not working? Read this</summary>
-      <p>A browser blocks cross-origin calls unless TheHive returns the right headers. Your TheHive admin must allow this app's origin via <code>play.http.cors</code> / reverse-proxy headers (<code>Access-Control-Allow-Origin</code>, <code>-Headers: authorization,content-type</code>). If you can't enable it, run the app behind a proxy that adds the API key server-side.</p>
+      <summary>Le CORS ne fonctionne pas ? Lire ceci</summary>
+      <p>Un navigateur bloque les appels cross-origin sauf si TheHive renvoie les bons en-têtes. Votre administrateur TheHive doit autoriser l'origine de cette app via <code>play.http.cors</code> / les en-têtes du reverse-proxy (<code>Access-Control-Allow-Origin</code>, <code>-Headers: authorization,content-type</code>). Si vous ne pouvez pas l'activer, faites tourner l'app derrière un proxy qui ajoute la clé API côté serveur.</p>
     </details>
   </div>
 </div>
@@ -157,11 +157,11 @@
 <!-- PDF generating overlay -->
 <div class="overlay pdf-overlay" id="pdfOverlay">
   <div class="spinner"></div>
-  <div>Generating PDF…</div>
+  <div>Génération du PDF…</div>
 </div>
 
 <!-- Toast -->
-<div class="toast" id="toast"><i data-lucide="check-circle"></i><span id="toastMsg">Done</span></div>
+<div class="toast" id="toast"><i data-lucide="check-circle"></i><span id="toastMsg">Terminé</span></div>
 
 <script type="module" src="js/app.js"></script>
 </body>

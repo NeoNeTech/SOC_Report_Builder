@@ -1,103 +1,103 @@
 // ============================================================
-// TEMPLATES — incident playbooks that pre-fill the report so the
-// analyst starts from a skeleton instead of a blank page.
-// Scalar fields are filled only if empty; list rows are appended.
+// TEMPLATES — playbooks d'incident qui pré-remplissent le rapport
+// pour que l'analyste parte d'un squelette plutôt que d'une page vide.
+// Champs simples : remplis seulement si vides. Listes : ajoutées.
 // ============================================================
 import { state, newId } from "./state.js";
 
 const mitre = (id, name, tactic) => ({ _id: newId(), id, name, tactic });
-const contain = (action, status = "Planned") => ({ _id: newId(), action, responsible: "", status });
+const contain = (action, status = "Planifié") => ({ _id: newId(), action, responsible: "", status });
 const reco = (priority, recommendation) => ({ _id: newId(), priority, recommendation, owner: "" });
 
 export const TEMPLATES = [
   {
     id: "phishing",
-    name: "Phishing",
+    name: "Hameçonnage",
     icon: "fish",
-    desc: "Credential-harvesting or malicious-attachment email",
+    desc: "Email de vol d'identifiants ou pièce jointe malveillante",
     vector: "Email",
-    summary: "A phishing email was reported/detected targeting one or more users. Initial analysis covers the lure, the delivery, any payload or credential-harvesting page, and user interaction.",
+    summary: "Un email d'hameçonnage a été signalé/détecté et cible un ou plusieurs utilisateurs. L'analyse porte sur le leurre, la diffusion, la charge utile ou la page de collecte d'identifiants, et l'interaction des utilisateurs.",
     mitre: [
-      mitre("T1566.001", "Spearphishing Attachment", "Initial Access"),
-      mitre("T1204.002", "Malicious File", "Execution"),
-      mitre("T1078", "Valid Accounts", "Persistence"),
+      mitre("T1566.001", "Pièce jointe d'hameçonnage ciblé", "Accès initial"),
+      mitre("T1204.002", "Fichier malveillant", "Exécution"),
+      mitre("T1078", "Comptes valides", "Persistance"),
     ],
     containment: [
-      contain("Quarantine/delete the email from all mailboxes"),
-      contain("Block sender domain and malicious URLs at the gateway"),
-      contain("Force password reset for impacted accounts"),
+      contain("Mettre en quarantaine / supprimer l'email de toutes les boîtes"),
+      contain("Bloquer le domaine expéditeur et les URL malveillantes à la passerelle"),
+      contain("Forcer la réinitialisation des mots de passe des comptes impactés"),
     ],
     recommendations: [
-      reco("High", "Enforce MFA on all accounts exposed to the phishing page"),
-      reco("Medium", "Deliver targeted phishing awareness to affected users"),
+      reco("Élevée", "Imposer le MFA sur tous les comptes exposés à la page d'hameçonnage"),
+      reco("Moyenne", "Sensibiliser les utilisateurs concernés à l'hameçonnage"),
     ],
   },
   {
     id: "malware",
-    name: "Malware / Ransomware",
+    name: "Malware / Rançongiciel",
     icon: "bug",
-    desc: "Endpoint malware or ransomware detection",
+    desc: "Détection de malware ou de rançongiciel sur un poste",
     vector: "Email",
-    summary: "Malware was detected on one or more endpoints. Analysis covers the initial execution, persistence, lateral movement attempts and any data-encryption or destructive impact.",
+    summary: "Un code malveillant a été détecté sur un ou plusieurs postes. L'analyse porte sur l'exécution initiale, la persistance, les tentatives de mouvement latéral et tout impact de chiffrement ou de destruction de données.",
     mitre: [
-      mitre("T1204.002", "Malicious File", "Execution"),
-      mitre("T1059.001", "PowerShell", "Execution"),
-      mitre("T1055", "Process Injection", "Defense Evasion"),
-      mitre("T1486", "Data Encrypted for Impact", "Impact"),
+      mitre("T1204.002", "Fichier malveillant", "Exécution"),
+      mitre("T1059.001", "PowerShell", "Exécution"),
+      mitre("T1055", "Injection de processus", "Évasion de défense"),
+      mitre("T1486", "Données chiffrées pour impact", "Impact"),
     ],
     containment: [
-      contain("Isolate affected endpoints from the network"),
-      contain("Block malicious hashes/C2 indicators (EDR + firewall)"),
-      contain("Preserve forensic image / memory before remediation"),
+      contain("Isoler les postes affectés du réseau"),
+      contain("Bloquer les hash/indicateurs C2 malveillants (EDR + pare-feu)"),
+      contain("Réaliser une image forensique / mémoire avant remédiation"),
     ],
     recommendations: [
-      reco("Critical", "Rebuild compromised hosts from a known-good image"),
-      reco("High", "Verify and test offline backups for recovery"),
+      reco("Critique", "Reconstruire les hôtes compromis à partir d'une image saine"),
+      reco("Élevée", "Vérifier et tester les sauvegardes hors ligne pour la restauration"),
     ],
   },
   {
     id: "bruteforce",
-    name: "Brute Force / Account Compromise",
+    name: "Force brute / Compromission de compte",
     icon: "key-round",
-    desc: "Password spraying, brute force or suspicious logins",
-    vector: "Network",
-    summary: "Anomalous authentication activity was detected (brute force / password spraying / impossible travel). Analysis covers source IPs, targeted accounts, success/failure patterns and post-access activity.",
+    desc: "Pulvérisation de mots de passe, force brute ou connexions suspectes",
+    vector: "Réseau",
+    summary: "Une activité d'authentification anormale a été détectée (force brute / pulvérisation de mots de passe / voyage impossible). L'analyse porte sur les IP sources, les comptes ciblés, les schémas de succès/échec et l'activité post-accès.",
     mitre: [
-      mitre("T1110", "Brute Force", "Credential Access"),
-      mitre("T1110.003", "Password Spraying", "Credential Access"),
-      mitre("T1078", "Valid Accounts", "Persistence"),
+      mitre("T1110", "Force brute", "Accès aux identifiants"),
+      mitre("T1110.003", "Pulvérisation de mots de passe", "Accès aux identifiants"),
+      mitre("T1078", "Comptes valides", "Persistance"),
     ],
     containment: [
-      contain("Block offending source IP ranges"),
-      contain("Disable / reset compromised accounts"),
-      contain("Revoke active sessions and tokens for impacted accounts"),
+      contain("Bloquer les plages d'IP sources fautives"),
+      contain("Désactiver / réinitialiser les comptes compromis"),
+      contain("Révoquer les sessions et jetons actifs des comptes impactés"),
     ],
     recommendations: [
-      reco("High", "Enforce MFA and lockout/throttling policies"),
-      reco("Medium", "Tune detection thresholds for spray patterns"),
+      reco("Élevée", "Imposer le MFA et des politiques de verrouillage/limitation"),
+      reco("Moyenne", "Ajuster les seuils de détection des schémas de pulvérisation"),
     ],
   },
   {
     id: "exfiltration",
-    name: "Data Exfiltration",
+    name: "Exfiltration de données",
     icon: "database-backup",
-    desc: "Suspected data theft / unusual outbound transfer",
-    vector: "Network",
-    summary: "Suspicious outbound data transfer was detected. Analysis covers the data accessed, the exfiltration channel, volume and destination, and the scope of potentially exposed information.",
+    desc: "Suspicion de vol de données / transfert sortant inhabituel",
+    vector: "Réseau",
+    summary: "Un transfert de données sortant suspect a été détecté. L'analyse porte sur les données consultées, le canal d'exfiltration, le volume et la destination, ainsi que l'étendue des informations potentiellement exposées.",
     mitre: [
-      mitre("T1005", "Data from Local System", "Collection"),
-      mitre("T1560", "Archive Collected Data", "Collection"),
-      mitre("T1041", "Exfiltration Over C2 Channel", "Exfiltration"),
-      mitre("T1567", "Exfiltration Over Web Service", "Exfiltration"),
+      mitre("T1005", "Données du système local", "Collecte"),
+      mitre("T1560", "Archivage des données collectées", "Collecte"),
+      mitre("T1041", "Exfiltration via le canal C2", "Exfiltration"),
+      mitre("T1567", "Exfiltration via un service Web", "Exfiltration"),
     ],
     containment: [
-      contain("Block destination IPs/domains and exfil channel"),
-      contain("Suspend involved accounts / API keys"),
-      contain("Preserve proxy, DLP and netflow logs"),
+      contain("Bloquer les IP/domaines de destination et le canal d'exfiltration"),
+      contain("Suspendre les comptes / clés API impliqués"),
+      contain("Préserver les logs proxy, DLP et netflow"),
     ],
     recommendations: [
-      reco("High", "Assess regulatory/notification obligations for exposed data"),
-      reco("Medium", "Deploy/tune DLP rules on the affected data class"),
+      reco("Élevée", "Évaluer les obligations réglementaires/de notification pour les données exposées"),
+      reco("Moyenne", "Déployer/ajuster des règles DLP sur la classe de données affectée"),
     ],
   },
 ];

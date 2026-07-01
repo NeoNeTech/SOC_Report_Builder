@@ -23,10 +23,10 @@ const RE = {
   domain: /\b(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}\b/gi,
 };
 
-// Map a detected kind to the IOC type used in the form.
+// Map a detected kind to the IOC type used in the form (FR).
 const TYPE = {
   sha256: "Hash SHA256", sha1: "Hash SHA1", md5: "Hash MD5",
-  url: "URL", email: "Email", ipv4: "IP", domain: "Domain",
+  url: "URL", email: "Email", ipv4: "IP", domain: "Domaine",
 };
 
 // File extensions that look like domains but aren't (reduce false positives).
