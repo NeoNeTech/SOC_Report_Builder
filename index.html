@@ -43,6 +43,8 @@
       <span class="progress-label" id="progressLabel">0%</span>
     </div>
 
+    <span class="autosave" id="autosaveStatus"></span>
+
     <div class="header-spacer"></div>
 
     <div class="toolbar">
@@ -51,12 +53,20 @@
       <button class="btn btn-ghost" id="btnNew"><i data-lucide="file-plus"></i><span>Nouveau</span></button>
       <button class="btn btn-ghost" id="btnSave"><i data-lucide="download"></i><span>Enregistrer</span></button>
       <button class="btn btn-ghost" id="btnLoad"><i data-lucide="upload"></i><span>Charger</span></button>
+      <button class="btn btn-ghost" id="btnHistory"><i data-lucide="history"></i><span>Historique</span></button>
       <button class="btn btn-ghost" id="btnMd"><i data-lucide="clipboard-copy"></i><span>Copier MD</span></button>
+      <button class="btn btn-ghost" id="btnExport"><i data-lucide="share-2"></i><span>Exporter</span><i data-lucide="chevron-down"></i></button>
       <button class="btn btn-primary" id="btnPdf"><i data-lucide="file-down"></i><span>Exporter PDF</span></button>
       <button class="btn btn-icon btn-ghost" id="btnSettings" title="Paramètres"><i data-lucide="settings"></i></button>
       <button class="btn btn-icon btn-ghost" id="btnTheme" title="Changer de thème"><i data-lucide="moon"></i></button>
       <input type="file" id="fileInput" accept="application/json" hidden />
       <div class="menu" id="templatesMenu"></div>
+      <div class="menu" id="exportMenu">
+        <div class="menu-label">Exports techniques</div>
+        <button class="menu-item" data-export="ioc-csv"><i data-lucide="table"></i><span><span class="mi-title">IOC — CSV</span><span class="mi-desc">Tableau des indicateurs</span></span></button>
+        <button class="menu-item" data-export="ioc-stix"><i data-lucide="share-2"></i><span><span class="mi-title">IOC — STIX 2.1</span><span class="mi-desc">Bundle d'indicateurs</span></span></button>
+        <button class="menu-item" data-export="navigator"><i data-lucide="layers"></i><span><span class="mi-title">Couche ATT&amp;CK Navigator</span><span class="mi-desc">Techniques MITRE (JSON)</span></span></button>
+      </div>
     </div>
   </header>
 
@@ -66,9 +76,10 @@
 
     <section class="panel preview-panel">
       <div class="preview-bar">
-        <h2><i data-lucide="eye"></i> Live Preview</h2>
+        <h2><i data-lucide="eye"></i> Aperçu</h2>
         <div class="header-spacer"></div>
-        <button class="btn btn-primary" id="btnPdf2"><i data-lucide="file-down"></i><span>Export PDF</span></button>
+        <button class="btn btn-ghost" id="btnQuality"><i data-lucide="list-checks"></i><span>Contrôle qualité</span><span class="qa-badge" id="qaBadge"></span></button>
+        <button class="btn btn-primary" id="btnPdf2"><i data-lucide="file-down"></i><span>Exporter PDF</span></button>
       </div>
       <div class="preview-scroll">
         <div class="doc" id="doc"></div>
@@ -99,6 +110,34 @@
   </div>
 </div>
 
+<!-- History modal -->
+<div class="overlay" id="historyOverlay">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <h3><i data-lucide="history"></i> Historique des rapports</h3>
+      <button class="btn btn-icon btn-ghost" id="historyClose"><i data-lucide="x"></i></button>
+    </div>
+    <p>Instantanés enregistrés localement sur ce poste (à chaque « Enregistrer » et à chaque nouveau rapport).</p>
+    <div class="history-list" id="historyList"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="historyClear"><i data-lucide="trash-2"></i> Vider l'historique</button>
+      <button class="btn btn-primary" id="historyDone">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Quality modal -->
+<div class="overlay" id="qualityOverlay">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <h3><i data-lucide="list-checks"></i> Contrôle qualité</h3>
+      <button class="btn btn-icon btn-ghost" id="qualityClose"><i data-lucide="x"></i></button>
+    </div>
+    <p>Cohérence et complétude du rapport. Cliquez sur une anomalie pour ouvrir la section concernée.</p>
+    <div class="qa-list" id="qualityBody"></div>
+  </div>
+</div>
+
 <!-- Settings modal -->
 <div class="overlay" id="settingsOverlay">
   <div class="modal">
@@ -122,6 +161,10 @@
     <div class="field">
       <label class="field-label">Nom de l'organisation</label>
       <input id="setOrg" placeholder="ex. ACME Corp — CSIRT" autocomplete="off" />
+    </div>
+    <div class="field">
+      <label class="field-label">Exports</label>
+      <label class="th-check"><input type="checkbox" id="setDefang" /> Défanger les IOC dans les exports (PDF, Markdown, CSV)</label>
     </div>
     <div class="modal-actions">
       <button class="btn btn-primary" id="settingsDone">Terminé</button>

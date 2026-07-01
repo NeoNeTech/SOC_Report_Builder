@@ -38,6 +38,10 @@ const builders = {
         ${field("Date de détection", `<input type="datetime-local" data-bind="meta.detectionDate" value="${esc(m.detectionDate)}" />`, true)}
       </div>
       <div class="field-row cols-2">
+        ${field("Date de confinement", `<input type="datetime-local" data-bind="meta.containmentDate" value="${esc(m.containmentDate)}" />`)}
+        ${field("Date de résolution", `<input type="datetime-local" data-bind="meta.resolutionDate" value="${esc(m.resolutionDate)}" />`)}
+      </div>
+      <div class="field-row cols-2">
         ${field("Analyste", `<input data-bind="meta.analyst" value="${esc(m.analyst)}" placeholder="Jean Dupont" />`, true)}
         ${field("Équipe", `<input data-bind="meta.team" value="${esc(m.team)}" placeholder="SOC Niveau 2" />`)}
       </div>
@@ -268,6 +272,13 @@ function initIocModal() {
     }
     closeOverlay("iocOverlay");
   };
+}
+
+// Ouvre (et déroule) une section, puis y défile — utilisé par le contrôle qualité.
+export function openSection(id) {
+  openSections.add(id);
+  const el = panel.querySelector(`[data-section="${id}"]`);
+  if (el) { el.classList.add("open"); el.scrollIntoView({ behavior: "smooth", block: "start" }); }
 }
 
 export function initForm() {

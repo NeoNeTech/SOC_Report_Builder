@@ -7,6 +7,7 @@ import {
   CONTAIN_STATUS_KEY, PRIORITY_LEVEL, TLP_LEVEL, CLASSIFICATION_LEVEL,
 } from "./config.js";
 import { esc, fmtDate, hasAny, splitCsv, icons } from "./util.js";
+import { computeMetrics, formatDuration } from "./lint.js";
 
 const REQUIRED = [
   () => state.meta.ticketId, () => state.meta.severity, () => state.meta.status,
@@ -76,6 +77,17 @@ export function renderDoc() {
       <div class="rpt-meta-item"><span class="k">TLP :</span>${m.tlp ? `<span class="tlp-badge tlp-${TLP_LEVEL[m.tlp] || "clear"}">${esc(m.tlp)}</span>` : '<span class="v">—</span>'}</div>
     </div>
   </div>`;
+
+  // ---- indicateurs de délai ----
+  const met = computeMetrics(state);
+  if (met.ttd != null || met.ttc != null || met.ttr != null) {
+    const cell = (label, ms) => `<div class="metric"><div class="metric-label">${label}</div><div class="metric-val">${formatDuration(ms) || "—"}</div></div>`;
+    h += `<div class="rpt-metrics">
+      ${cell("Temps de détection", met.ttd)}
+      ${cell("Temps de confinement", met.ttc)}
+      ${cell("Temps de résolution", met.ttr)}
+    </div>`;
+  }
 
   // ---- vue d'ensemble ----
   if (m.tags.trim() || tools.length) {

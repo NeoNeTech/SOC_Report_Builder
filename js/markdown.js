@@ -3,6 +3,7 @@
 // ============================================================
 import { state } from "./state.js";
 import { fmtDate, splitCsv } from "./util.js";
+import { defangValue } from "./exporters.js";
 
 export function buildMarkdown() {
   const { meta: m, summary: su, technical: t, investigation: inv, remediation: rem, references: ref } = state;
@@ -52,8 +53,9 @@ export function buildMarkdown() {
       L.push("");
     }
     if (t.iocs.length) {
+      const fmt = state.prefs && state.prefs.defang ? defangValue : (v) => v;
       L.push(`### Indicateurs de compromission`, "", `| Type | Valeur | Description | Confiance |`, `|---|---|---|---|`);
-      t.iocs.forEach((x) => L.push(`| ${x.type || "—"} | \`${x.value || "—"}\` | ${x.desc || "—"} | ${x.confidence || "—"} |`));
+      t.iocs.forEach((x) => L.push(`| ${x.type || "—"} | \`${x.value ? fmt(x.value) : "—"}\` | ${x.desc || "—"} | ${x.confidence || "—"} |`));
       L.push("");
     }
     if (t.timeline.length) {

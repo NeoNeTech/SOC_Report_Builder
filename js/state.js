@@ -8,7 +8,8 @@ import { LIST_PATHS } from "./schema.js";
 export function blankState() {
   return {
     branding: { orgName: "", logo: "", logoRatio: 0 },
-    meta: { ticketId: "", classification: "", tlp: "", severity: "", status: "", detectionDate: "", analyst: "", team: "", tags: "", tools: [], toolsOther: "" },
+    prefs: { defang: false },
+    meta: { ticketId: "", classification: "", tlp: "", severity: "", status: "", detectionDate: "", containmentDate: "", resolutionDate: "", analyst: "", team: "", tags: "", tools: [], toolsOther: "" },
     summary: { text: "", assets: [], impactLevel: "", impactDesc: "" },
     technical: { vector: "", mitre: [], iocs: [], timeline: [], logs: "", notes: "" },
     investigation: { narrative: "", queries: [], fpAnalysis: "", rootCause: "" },
@@ -75,4 +76,20 @@ export function mergeIntoBlank(loaded) {
     }
   }
   return s;
+}
+
+// Replace the state from a loaded object and re-assign dynamic-list row ids.
+export function hydrate(loaded) {
+  replaceState(mergeIntoBlank(loaded));
+  ensureRowIds();
+}
+
+// True if the report holds any meaningful content.
+export function hasContent(s = state) {
+  const has = (...v) => v.some((x) => (Array.isArray(x) ? x.length : String(x || "").trim() !== ""));
+  return has(
+    s.meta.ticketId, s.meta.analyst, s.meta.severity, s.summary.text, s.technical.logs,
+    s.summary.assets, s.technical.mitre, s.technical.iocs, s.technical.timeline,
+    s.investigation.queries, s.remediation.containment, s.remediation.recommendations, s.references.external
+  );
 }

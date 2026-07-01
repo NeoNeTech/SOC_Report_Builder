@@ -26,6 +26,7 @@ export function initSettings() {
 
   function syncUI() {
     $("setOrg").value = state.branding.orgName || "";
+    $("setDefang").checked = !!state.prefs.defang;
     renderLogoPreview();
   }
 
@@ -34,6 +35,7 @@ export function initSettings() {
   $("settingsDone").onclick = () => closeOverlay("settingsOverlay");
 
   $("setOrg").oninput = (e) => { state.branding.orgName = e.target.value; emitChange(); };
+  $("setDefang").onchange = (e) => { state.prefs.defang = e.target.checked; emitChange(); };
 
   $("setLogoInput").onchange = (e) => {
     const file = e.target.files[0];

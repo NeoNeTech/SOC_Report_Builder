@@ -39,6 +39,13 @@ you export it.
     hashes and emails are detected automatically (handles defanged `1[.]2[.]3[.]4`, `hxxp`).
   - **MITRE autocomplete** — type a technique ID (e.g. `T1566.001`) and the name + tactic
     fill in; IOC type is auto-detected from the value.
+- **Autosave & historique** — la copie de travail est auto-enregistrée localement et
+  **récupérée au rechargement** ; historique d'instantanés (restauration / suppression).
+- **Contrôle qualité** — linter de complétude/cohérence (champs requis, sévérité élevée
+  sans confinement, statut Résolu sans cause racine, IOC sans confiance…) + **indicateurs
+  de délai** (temps de détection / confinement / résolution).
+- **Exports techniques** — IOC en **CSV** et **STIX 2.1**, **couche ATT&CK Navigator**,
+  et **defang** optionnel des IOC dans les exports.
 - **Export** — native, **text-based A4 PDF** (selectable text, real pagination via
   jsPDF + AutoTable) and clean Markdown to clipboard.
 - **Drafts** — save/load the whole report as JSON.
@@ -164,6 +171,10 @@ js/
   pdf.js              # native jsPDF (+AutoTable) text-based A4 export
   ioc.js              # IOC extraction from raw text (defang-aware)
   templates.js        # incident playbooks (pre-fill the report)
+  storage.js          # autosave + local history (localStorage)
+  lint.js             # quality checks + delay metrics (TTD/TTC/TTR)
+  exporters.js        # IOC CSV/STIX 2.1, ATT&CK Navigator layer, defang
+  settings.js         # branding (logo, org name) + export prefs
   draft.js            # save/load JSON drafts
   thehive.js          # TheHive 5 client + case → state mapping
   ui.js               # toast + confirm modal + dropdown menu

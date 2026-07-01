@@ -8,6 +8,8 @@ import { toast } from "./ui.js";
 import {
   SEVERITY_LEVEL, PRIORITY_LEVEL, CONFIDENCE_LEVEL, TLP_LEVEL, CLASSIFICATION_LEVEL,
 } from "./config.js";
+import { defangValue } from "./exporters.js";
+import { computeMetrics, formatDuration } from "./lint.js";
 
 // palette (impression)
 const INK = [28, 37, 51];
@@ -201,6 +203,17 @@ function build() {
   }
   if (tools.length) { y += 1; labeledValue("Outils source", tools.join(", ")); }
   if (m.tags.trim()) { labeledValue("Étiquettes", splitCsv(m.tags).join(", ")); }
+
+  // indicateurs de délai
+  const met = computeMetrics(state);
+  if (met.ttd != null || met.ttc != null || met.ttr != null) {
+    const parts = [
+      met.ttd != null ? `Détection : ${formatDuration(met.ttd)}` : null,
+      met.ttc != null ? `Confinement : ${formatDuration(met.ttc)}` : null,
+      met.ttr != null ? `Résolution : ${formatDuration(met.ttr)}` : null,
+    ].filter(Boolean).join("      ");
+    y += 1; labeledValue("Indicateurs de délai", parts);
+  }
   y += 2;
 
   // ---------- Synthèse ----------
@@ -232,8 +245,9 @@ function build() {
     }
     if (t.iocs.length) {
       subHeading("Indicateurs de compromission");
+      const fmt = state.prefs && state.prefs.defang ? defangValue : (v) => v;
       table(["Type", "Valeur", "Description", "Conf."],
-        t.iocs.map((x) => [x.type || "—", x.value || "—", x.desc || "—", x.confidence || "—"]),
+        t.iocs.map((x) => [x.type || "—", x.value ? fmt(x.value) : "—", x.desc || "—", x.confidence || "—"]),
         {
           columnStyles: { 1: { font: "courier", fontSize: 7.5 }, 3: { halign: "center", cellWidth: 18 } },
           didParseCell: (d) => { if (d.section === "body" && d.column.index === 3 && d.cell.raw && d.cell.raw !== "—") { d.cell.styles.textColor = confColor(d.cell.raw); d.cell.styles.fontStyle = "bold"; } },
