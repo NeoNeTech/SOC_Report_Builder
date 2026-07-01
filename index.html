@@ -53,6 +53,7 @@
       <button class="btn btn-ghost" id="btnLoad"><i data-lucide="upload"></i><span>Charger</span></button>
       <button class="btn btn-ghost" id="btnMd"><i data-lucide="clipboard-copy"></i><span>Copier MD</span></button>
       <button class="btn btn-primary" id="btnPdf"><i data-lucide="file-down"></i><span>Exporter PDF</span></button>
+      <button class="btn btn-icon btn-ghost" id="btnSettings" title="Paramètres"><i data-lucide="settings"></i></button>
       <button class="btn btn-icon btn-ghost" id="btnTheme" title="Changer de thème"><i data-lucide="moon"></i></button>
       <input type="file" id="fileInput" accept="application/json" hidden />
       <div class="menu" id="templatesMenu"></div>
@@ -94,6 +95,36 @@
     <div class="modal-actions">
       <button class="btn btn-ghost" id="iocClear">Effacer</button>
       <button class="btn btn-primary" id="iocAdd"><i data-lucide="plus"></i> Ajouter <span id="iocCount">0</span> IOC</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings modal -->
+<div class="overlay" id="settingsOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3><i data-lucide="settings"></i> Paramètres du rapport</h3>
+      <button class="btn btn-icon btn-ghost" id="settingsClose"><i data-lucide="x"></i></button>
+    </div>
+    <p>Personnalisez l'en-tête du rapport avec le logo et le nom de votre organisation.</p>
+    <div class="field">
+      <label class="field-label">Logo de l'organisation</label>
+      <div class="set-logo-row">
+        <div class="set-logo-preview" id="setLogoPreview"></div>
+        <div class="set-logo-actions">
+          <label class="btn btn-ghost" for="setLogoInput"><i data-lucide="upload"></i> Choisir une image</label>
+          <input type="file" id="setLogoInput" accept="image/*" hidden />
+          <button class="btn btn-ghost" id="setLogoRemove" hidden><i data-lucide="trash-2"></i> Retirer</button>
+        </div>
+      </div>
+      <span class="th-hint" style="text-transform:none">PNG ou JPG, fond transparent recommandé. Max 2 Mo.</span>
+    </div>
+    <div class="field">
+      <label class="field-label">Nom de l'organisation</label>
+      <input id="setOrg" placeholder="ex. ACME Corp — CSIRT" autocomplete="off" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="settingsDone">Terminé</button>
     </div>
   </div>
 </div>

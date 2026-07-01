@@ -55,10 +55,15 @@ export function renderDoc() {
   // ---- en-tête ----
   const sevClass = "sev-" + (SEVERITY_LEVEL[m.severity] || "info");
   const tools = allTools();
+  const b = state.branding;
   h += `<div class="rpt-head">
     <div class="rpt-head-top">
       <svg class="shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      <h1>Rapport d'investigation de sécurité</h1>
+      <div class="rpt-head-titles">
+        <h1>Rapport d'investigation de sécurité</h1>
+        ${b.orgName ? `<span class="rpt-org">${esc(b.orgName)}</span>` : ""}
+      </div>
+      ${b.logo ? `<div class="rpt-logo-box"><img class="rpt-logo" src="${esc(b.logo)}" alt="logo" /></div>` : ""}
     </div>
     <div class="rpt-meta-grid">
       <div class="rpt-meta-item"><span class="k">Ticket :</span><span class="v">${esc(m.ticketId) || "—"}</span></div>

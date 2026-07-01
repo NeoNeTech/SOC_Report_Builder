@@ -7,6 +7,7 @@ import { LIST_PATHS } from "./schema.js";
 
 export function blankState() {
   return {
+    branding: { orgName: "", logo: "", logoRatio: 0 },
     meta: { ticketId: "", classification: "", tlp: "", severity: "", status: "", detectionDate: "", analyst: "", team: "", tags: "", tools: [], toolsOther: "" },
     summary: { text: "", assets: [], impactLevel: "", impactDesc: "" },
     technical: { vector: "", mitre: [], iocs: [], timeline: [], logs: "", notes: "" },

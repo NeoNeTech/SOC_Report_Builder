@@ -9,6 +9,7 @@ import { buildMarkdown } from "./markdown.js";
 import { exportPdf } from "./pdf.js";
 import { saveDraft, loadDraftFile } from "./draft.js";
 import { initThehive } from "./thehive.js";
+import { initSettings } from "./settings.js";
 import { TEMPLATES, applyTemplate } from "./templates.js";
 import { toast, confirmModal } from "./ui.js";
 import { icons, esc } from "./util.js";
@@ -102,6 +103,7 @@ function wireTemplates() {
 function boot() {
   initForm();
   initThehive(fullRender);
+  initSettings();
   wireToolbar();
   wireTemplates();
   render();

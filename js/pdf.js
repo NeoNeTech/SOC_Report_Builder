@@ -157,12 +157,27 @@ function build() {
   }
 
   // ---------- header banner ----------
+  const b = state.branding;
   const tools = [...m.tools]; if (m.toolsOther.trim()) tools.push(...splitCsv(m.toolsOther));
   const headTop = classifLevel ? 6 : 0;
   doc.setFillColor(...NAVY); doc.rect(0, headTop, PW, 30, "F");
   setFont("bold", 15, WHITE); doc.text("RAPPORT D'INVESTIGATION DE SÉCURITÉ", M, headTop + 13);
   setFont("normal", 9, [170, 180, 195]);
-  doc.text(`Ticket ${m.ticketId || "—"}   •   ${fmtDate(m.detectionDate) || "Date —"}`, M, headTop + 20);
+  const subtitle = `${b.orgName ? b.orgName + "   •   " : ""}Ticket ${m.ticketId || "—"}   •   ${fmtDate(m.detectionDate) || "Date —"}`;
+  doc.text(subtitle, M, headTop + 20);
+
+  // organisation logo, on a white chip at the right of the banner
+  if (b.logo) {
+    const ratio = b.logoRatio || 1;
+    const maxH = 15, maxW = 46, pad = 1.5;
+    let lh = maxH, lw = lh * ratio;
+    if (lw > maxW) { lw = maxW; lh = lw / ratio; }
+    const boxW = lw + pad * 2, boxH = lh + pad * 2;
+    const bx = PW - M - boxW, by = headTop + (30 - boxH) / 2;
+    doc.setFillColor(255, 255, 255); doc.roundedRect(bx, by, boxW, boxH, 1, 1, "F");
+    const fmt = /^data:image\/(jpe?g)/i.test(b.logo) ? "JPEG" : "PNG";
+    try { doc.addImage(b.logo, fmt, bx + pad, by + pad, lw, lh); } catch (e) { /* image illisible : on ignore */ }
+  }
   y = headTop + 38;
 
   const metaRows = [
